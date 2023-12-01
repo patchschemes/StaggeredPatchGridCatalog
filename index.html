@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exhaustive enumeration of multiscale 2D staggered patch grids</title>
+    <meta charset="utf-8">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S3WMTPRFH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-7S3WMTPRFH');
+    </script>
+  
+    <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+    <script type="text/x-mathjax-config">
+        var font = "Neo-Euler";
+        MathJax.Hub.Config({
+            "SVG":{
+              font:font,
+              mtextFontInherit: true
+            },
+            "HTML-CSS": {
+                webFont: font,
+                imageFont: font,
+                preferredFont: font,
+                availableFonts: [],
+                mtextFontInherit: true
+            }
+        });
+    </script>
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+    
+    <script type="text/x-mathjax-config">
+      window.PlotlyConfig = {MathJaxConfig: "local"};
+    </script>
+    
+    <script src="plotly-2.27.0.min.js" charset="utf-8"></script>
+    <script src="domMainpulation.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="styles.min.css">
+  </head>
+
+  <body>
+
+    <article id="article">
+      
+      <div id="prmCtrls">
+          <div class="uiRow_2Prm">
+            <div class="uiPrm">
+              <label for="N_nmbr">Macro-grid intervals (on <span class="clrpb">violet</span> grid) \(N\):</label>
+              <input type="number" min="2" max="6" step="2" value="6" id="N_nmbr" name="N_nmbr">
+            </div>
+            <div class="uiPrm">
+              <label for="n_nmbr">Micro-grid intervals (on <span class="clrg">green</span> grid) \(n\):</label>
+              <input type="number" min="4" max="6" step="2" value="6" id="n_nmbr" name="n_nmbr">
+            </div>
+          </div>
+          
+          <div class="uiRow_2Prm">
+            <div class="uiPrm">
+              <label for="eTN_nmbr">Edge node layers in normal direction:</label>
+              <input type="number" min="1" max="3" value="2" id="eTN_nmbr" name="eTN_nmbr">
+            </div>
+            <div class="uiPrm">
+              <label for="eTT_nmbr">Edge node layers in tangential direction:</label>
+              <input type="number" min="0" max="2" value="0" id="eTT_nmbr" name="eTT_nmbr">
+            </div>
+          </div>
+          
+          <div class="uiOneRow">
+            <div class="uiRow_lblNmbrSldr uiPrm">
+              <label for="r_txt">Patch scale ratio \(r = l/(2\Delta)\):</label>
+              <span class="EulerFont" id="r_txt" name="r_txt">0.25</span>
+              <span class="spacer"></span>
+              <span class="sldrLmt">1</span>
+              <input type="range" min="1" max="50" id="r_sldr">
+              <span class="sldrLmt">0.5</span>
+            </div>
+          </div>
+          
+          <div class="uiMultiRow">
+            <div class="uiRow_2Prm">
+              <div class="uiPrm">
+                <label for="pId_nmbr">Patch grid Id:</label>
+                <input type="number" min="1" max="83520" value="79985" id="pId_nmbr" name="pId_nmbr">
+                <input type="checkbox" id="onlyCentred" name="onlyCentred">
+                <label for="onlyCentred">Restrict to centred patch grids</label>
+              </div>
+              <div class="uiPrm">
+                <label for="pType_txt">Patch grid type:</label>
+                <input type="text" value="xxxx+xxxx+xxxx+xxxx" id="pType_txt" name="pType_txt">
+              </div>
+            </div>
+            <div class="uiRow_sldr uiPrm">
+                <span class="sldrLmt" id="pId_sldMin">1</span>
+                <input type="range" min="1" max="83520" value="79985" id="pId_sldr" list="stableIdTicks">
+                <span class="sldrLmt" id="pId_sldMax">83520</span>
+                <datalist id="stableIdTicks" class="sliderticks">
+                </datalist>
+            </div>
+          </div>
+          
+          <div></div>
+          
+          <div class="uiRow_6col">
+            <div class="uiOut">
+              <span id="pSymmetric">Asymmetric</span>
+            </div>
+            <div class="uiOut">
+              <span" id="pStable">Unstable</span>
+            </div>
+            <div class="uiOut">
+              <span id="pCentred">Non-centred</span>
+            </div>
+            <div class="uiOut">
+              <span" id="pAccurate">Inaccurate</span>
+            </div>
+            <div class="uiOut">
+              <div>
+                <span">Interior nodes \(n_p^I\): </span><span class="EulerFont" id="npI_spn"></span>
+              </div>
+            </div>
+            <div class="uiOut">
+              <span">Edge nodes \(n_p^E\): </span><span class="EulerFont" id="npE_spn"></span>
+            </div>
+            <div class="help">
+              <span id="help"><a href="#" id="btn-popup" class="popup">Help</a></span>
+            </div>
+          </div>
+          
+      </div>
+      
+      
+      <div>
+        <div class="overlay_popup btn-popup"><span id="close"><a href="#" onclick="$(this).popupClose();">Close</a></span>
+          
+          <b>Patch grid Id slider</b>
+          <ul>
+            <li>
+              The slider ticks mark the Ids of centred patch grids.  The snapping/sticky behaviour of ticks close to the start and end of the slider forbids dragging the slider all the way to the ends.  In this situation, use the left/down and right/up arrow keys to decrease and increase the patch grid Ids, or use the decrement/increment buttons of the number field for patch grid Id.
+            </li>
+          </ul>
+          
+          <b>Interactively hide/show plot elements</b>
+          <ul>
+            <li>
+              Click on an individual legend entry to hide/show the corresponding plot element.
+            </li>
+            <li>
+              Double-click on an individual legend entry to isolate it, that is, hide all the other plot elements, or to show all the plot elements.
+            </li>
+            <li>
+              Click and drag on the main plot area to zoom.  Double click to zoom out to initial view.
+            </li>
+          </ul>
+          
+          <b>Almost obvious keyboard shortcuts for quick exploration</b>
+          <ul>
+            <li>
+              Down/Up arrow key to decrease/increase values of the number field (e.g., \(N\), \(n\), edge node layers, \(r\), patch grid Id).
+            </li>
+            <li>
+              Left/down and right/up arrow keys to decrease and increase slider values.  These keys do not work on the slider for patch grid Id when restricted to centred patch grids.
+            </li>
+            <li>
+              Manually type in the patch grid type.  The plot updates for any valid types on every key stroke  just while typing.  Any invalid patch grid type is ignored restoring to the latest valid type.
+            </li>
+          </ul>
+          
+          <b>Responsiveness, look, and feel</b>
+          <ul>
+            <li>Developed with a focus for Firefox (most tested).  A reasonable test shows that the responsiveness, look, and feel are all very similar among Firefox, Chrome, and Konqueror.</li>
+          </ul>
+
+          <b>Dependencies</b>
+          <ul>
+            <li>This interactive figure is generated using the open-source JavaScript charting library <a href="https://github.com/plotly/plotly.js">Plotly.js</a>.</li>
+            <li>\(\LaTeX\) typesetting is done using the open-source JavaScript display engine <a href="https://github.com/mathjax/MathJax">MathJax</a>.</li>
+            <li>Some DOM manipulations are done using the open-source JavaScript library <a href="https://github.com/jquery/jquery">jQuery</a>.</li>
+            <li>The fonts used are Domitian, Neo Euler, and Computer Modern Typewriter; all with liberal licences.</li>
+          </ul>
+          
+        </div>
+      </div>
+      
+      <div id="plotDiv">
+      </div>
+
+      <header>
+        This interactive figure exhaustively enumerates all <span class="EulerFont">167&ThinSpace;040</span> possible 2D multiscale staggered patch grids (altogether for odd and even \(n/2\) ) studied in the arXiv article (<a href="https://doi.org/10.48550/arXiv.2207.12623" target="_blank">arXiv:2207.12623</a>) titled <em>Staggered grids for multidimensional multiscale modelling.</em>
+      </header>
+
+    </article>
+
+  </body>
+  <script src="staggeredPatchgridCatalog.min.js" charset="utf-8"></script>
+</html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Exhaustive enumeration of multiscale 2D staggered patch grids</title>
+    <title>Exhaustively enumerate all 167,040 possible 2D multiscale staggered patch grids}</title>
     <meta charset="utf-8">
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S3WMTPRFH"></script>
@@ -72,7 +72,7 @@
               <label for="r_txt">Patch scale ratio \(r = l/(2\Delta)\):</label>
               <span class="EulerFont" id="r_txt" name="r_txt">0.25</span>
               <span class="spacer"></span>
-              <span class="sldrLmt">1</span>
+              <span class="sldrLmt">0.01</span>
               <input type="range" min="1" max="50" id="r_sldr">
               <span class="sldrLmt">0.5</span>
             </div>
@@ -81,7 +81,7 @@
           <div class="uiMultiRow">
             <div class="uiRow_2Prm">
               <div class="uiPrm">
-                <label for="pId_nmbr">Patch grid Id:</label>
+                <label for="pId_nmbr">Patch grid Id: #</label>
                 <input type="number" min="1" max="83520" value="79985" id="pId_nmbr" name="pId_nmbr">
                 <input type="checkbox" id="onlyCentred" name="onlyCentred">
                 <label for="onlyCentred">Restrict to centred patch grids</label>
@@ -187,7 +187,7 @@
       </div>
 
       <header>
-        This interactive figure exhaustively enumerates all <span class="EulerFont">167&ThinSpace;040</span> possible 2D multiscale staggered patch grids (altogether for odd and even \(n/2\) ) studied in the arXiv article (<a href="https://doi.org/10.48550/arXiv.2207.12623" target="_blank">arXiv:2207.12623</a>) titled <em>Staggered grids for multidimensional multiscale modelling.</em>
+        This interactive figure exhaustively enumerates all <span class="EulerFont">167&ThinSpace;040</span> possible 2D multiscale staggered patch grids (altogether for odd and even \(n/2\)) studied in the arXiv article (<a href="https://doi.org/10.48550/arXiv.2207.12623" target="_blank">arXiv:2207.12623</a>) titled <em>Staggered grids for multidimensional multiscale modelling.</em>
       </header>
 
     </article>
